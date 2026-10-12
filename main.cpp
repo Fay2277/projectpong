@@ -46,6 +46,13 @@ void load()
 	ballVelocity = { (player1Serving ? initialVelocityX : -initialVelocityX), initialVelocityY };
 }
 
+void reset()
+{
+    ball.setPosition(gameWidth / 2.f, gameHeight / 2.f);
+    paddles[0].setPosition(paddleOffsetWall + paddleSize.x / 2.f, gameHeight / 2.f);
+    paddles[1].setPosition(gameWidth - paddleOffsetWall - paddleSize.x / 2.f, gameHeight / 2.f);
+    load();
+}
 
 void update(float dt)
 {
@@ -72,8 +79,28 @@ void update(float dt)
     }
     else if (by < 0)
     {
-
+        ballVelocity.x *= velocityMultiplier;
+        ballVelocity.y *= -velocityMultiplier;
+        ball.move(sf::Vector2f(0.f, -10.f));
     }
+    else if (bx > gameWidth)
+    {
+        reset();
+    }
+    else if (bx < 0)
+    {
+        reset();
+	}
+    else if (bx < paddleSize.x + paddleOffsetWall &&
+             by > paddles[0].getPosition().y - (paddleSize.y * 0.5) &&
+             by < paddles[0].getPosition().y + (paddleSize.y * 0.5))
+    {
+        ballVelocity.x *= -velocityMultiplier;
+        ballVelocity.y *= velocityMultiplier;
+        ball.move(sf::Vector2f(10.f, 0.f));
+	}
+
+    
 
 	paddles[0].move(sf::Vector2f(0.f, direction * paddleSpeed * dt));
 }
