@@ -35,7 +35,8 @@ void reset()
 {
 	ballVelocity = {(playerServing ? initialVelocityX : -initialVelocityX), initialVelocityY};
 
-    ball.setPosition(gameWidth / 2.f, gameHeight / 2.f);
+    ball.setPosition(paddleOffsetWall + paddleSize.x + ballRadius * 2.f, gameHeight / 2.f);
+
     paddles[0].setPosition(paddleOffsetWall + paddleSize.x / 2.f, gameHeight / 2.f);
     paddles[1].setPosition(gameWidth - paddleOffsetWall - paddleSize.x / 2.f, gameHeight / 2.f);
     
@@ -43,13 +44,13 @@ void reset()
 	sstr << score[0] << " - " << score[1];
 	text.setString(sstr.str());
 
-	text.setPosition((gameWidth * .5f) - (text.getLocalBounds().width * 0.5f), 0);
+	text.setPosition((gameWidth * .5f) - (text.getLocalBounds().width * .5f), 0);
 
 }
 
 void init()
 {
-    for (sf::RectangleShape& p : paddles)
+    for (sf::RectangleShape &p : paddles)
     {
         p.setSize(paddleSize);
 		p.setOrigin(paddleSize / 2.f);
@@ -72,6 +73,7 @@ void update(float dt)
 	const float by = ball.getPosition().y;
 
     float direction = 0.0f;
+
     if (sf::Keyboard::isKeyPressed(controls[0]) && paddles[0].getPosition().y > paddleSize.y / 2.f)
     {
         direction--;
@@ -86,7 +88,7 @@ void update(float dt)
     {
         direction--;
     }
-    if (sf::Keyboard::isKeyPressed(controls[3]))
+    if (sf::Keyboard::isKeyPressed(controls[3]) && paddles[1].getPosition().y < gameHeight - paddleSize.y / 2.f)
     {
         direction++;
     }
@@ -122,7 +124,7 @@ void update(float dt)
     {
         ballVelocity.x *= -velocityMultiplier;
         ballVelocity.y *= velocityMultiplier;
-        ball.move(sf::Vector2f(10.f, 0.f));
+        ball.move(sf::Vector2f(+10.f, 0));
 	}
     else if (bx < gameWidth - paddleSize.x - paddleOffsetWall &&
              by > paddles[1].getPosition().y - (paddleSize.y * 0.5) &&
@@ -130,7 +132,7 @@ void update(float dt)
     {
         ballVelocity.x *= -velocityMultiplier;
         ballVelocity.y *= velocityMultiplier;
-        ball.move(sf::Vector2f(10.f, 0.f));
+        ball.move(sf::Vector2f(-10.f, 0));
     }
 
 }
@@ -178,6 +180,5 @@ int main()
 
 	  window.display();
   }
-
   return 0;
 }
